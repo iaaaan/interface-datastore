@@ -27,6 +27,25 @@ class MemoryDatastore {
     setImmediate(callback)
   }
 
+  append (key /* : Key */, val /* : Buffer */, callback /* : Callback<void> */) /* : void */ {
+    const keyString = key.toString()
+    this.has(key, (err, exists) => {
+      if (err) {
+        return callback(err)
+      }
+
+      if (!exists) {
+        this.data[keyString] = [val]
+        callback()
+      } else {
+        if (!this.data[keyString].some(v => v.equals(val))) {
+          this.data[keyString].push(val)
+        }
+        callback()
+      }
+    })
+  }
+
   get (key /* : Key */, callback /* : Callback<Buffer> */) /* : void */ {
     this.has(key, (err, exists) => {
       if (err) {
